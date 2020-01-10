@@ -1,0 +1,213 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+{include file="public/meta" /}
+<title>采集网站设置</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+</head>
+<body>
+{include file="public/menu" /}
+<section class="Hui-admin-article-wrapper">
+{include file="public/header" /}
+
+<div class="Hui-admin-article">
+	<nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+		首页
+		<span class="c-gray en">/</span>
+		采集网站设置
+	</nav>
+
+	<article class="Hui-admin-content clearfix">
+		<div class="panel mt-20">
+		<div class="panel-body">
+		<div class="clearfix"></div>
+		<div class="dataTables_wrapper mt-20 clearfix">
+		<table class="table table-border table-bordered table-hover table-bg table-sort">
+			<thead>
+				<tr class="text-c">
+					<th width="70">序号</th>
+					<th width="120">采集站缩写</th>
+					<th width="200">URL规则</th>
+					<th>网站地址</th>
+					<th width="150">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="text-c">
+					<td></td>
+					<td class="text-l"><input name="domain" class="input-text"></td>
+					<td>
+						<span class="select-box">
+						<select class="select" name="reg" size="1">
+							<option value="">请选择URL规则</option>
+							{notempty name="regUrl"}
+							{foreach name="regUrl" item="item"}
+							<option value="{$item['reg']}">{$item['title']}</option>
+							{/foreach}
+							{/notempty}
+						</select>
+						</span>
+					</td>
+					<td class="text-l"><input name="url" class="input-text"></td>
+					<td class="text-c">
+						<a class="btn btn-primary radius" href="javascript:;" onclick="dataadd(this)">
+						<i class="Hui-iconfont"></i> 添加
+						</a>
+					</td>
+				</tr>
+
+				{foreach name="list" item="vo" key="k"}
+				<tr class="text-c">
+					<input type="hidden" name="id" value="{$vo['id']}">
+					<td>{$vo['id']}</td>
+					<td class="text-l">
+						{$vo['domain']}
+						{if condition="$vo['status'] eq TableConst::CJDOMAIN_STATUS_DEL"}
+							<span class="c-red">[已删除]</span>
+						{/if}
+					</td>
+					<td>
+						<span class="select-box">
+						<select class="select" name="reg" size="1">
+							<option value="">请选择URL规则</option>
+							{notempty name="regUrl"}
+							{foreach name="regUrl" item="item"}
+							<option value="{$item['reg']}" {if condition="$vo['url_reg'] eq $item['reg']"}selected="selected"{/if}>{$item['title']}</option>
+							{/foreach}
+							{/notempty}
+						</select>
+						</span>
+					</td>
+					<td class="text-l"><input value="{$vo['refer_url']}" name="url" class="input-text"></td>
+					<td class="text-c">
+						{if condition="$vo['status'] eq TableConst::CJDOMAIN_STATUS_PASS"}
+						<a href="javascript:;" onclick="datadel(this)" class="btn btn-danger radius size-S">
+						<i class="Hui-iconfont"></i> 删除
+						</a>&nbsp;&nbsp;
+						<a href="javascript:;" onclick="dataedit(this)" class="btn btn-success radius size-S">
+						<i class="Hui-iconfont"></i> 修改
+						</a>
+						{else/}
+						<a href="javascript:;" onclick="dataopen(this)" class="btn btn-secondary radius size-S">
+							<i class="Hui-iconfont">&#xe6a7;</i> 启用
+						</a>
+						{/if}
+					</td>
+				</tr>
+				{/foreach}
+			</tbody>
+		</table>
+
+		</div>
+		</div>
+		</div>
+	</article>
+</div>
+</section>
+
+{include file="public/footer" /}
+
+<script type="text/javascript">
+/**
+* 新增
+*/
+function dataadd(obj)
+{
+	var _this = $(obj),
+		domain = _this.parent().parent().find("input[name='domain']").val(),
+		url = _this.parent().parent().find("input[name='url']").val(),
+		reg = _this.parent().parent().find("option:selected").val();
+
+	if(domain == '') {
+		layer.msg('采集站缩写不能为空', {icon:2, time:2000});
+		return;
+	}
+	if(reg == '' || reg == null) {
+		layer.msg('请选择URL规则', {icon:2, time:2000});
+		return;
+	}
+
+	var postUrl = '/system/cjdomain/add';
+	$.post(postUrl, {domain:domain, url_reg:reg, refer_url:url}, function(result){
+		if(result.code == '2000') {
+			layer.msg(result.msg, {icon:1, time:2000});
+			location.reload();
+		}else {
+			layer.msg(result.msg, {icon:2, time:2000});
+		}
+	});
+}
+
+/**
+* 修改
+*/
+function dataedit(obj)
+{
+	var _this = $(obj),
+		id = _this.parent().parent().find("input[name='id']").val(),
+		url = _this.parent().parent().find("input[name='url']").val(),
+		reg = _this.parent().parent().find("option:selected").val();
+
+	if(reg == '' || reg == null) {
+		layer.msg('请选择URL规则', {icon:2, time:2000});
+		return;
+	}
+
+	var postUrl = '/system/cjdomain/edit';
+	$.post(postUrl, {id:id, url_reg:reg, refer_url:url}, function(result){
+		if(result.code == '2000') {
+			layer.msg(result.msg, {icon:1, time:2000});
+			location.reload();
+		}else {
+			layer.msg(result.msg, {icon:2, time:2000});
+		}
+	});
+}
+
+/**
+* 删除
+*/
+function datadel(obj) {
+	var _this = $(obj),
+		id = _this.parent().parent().find("input[name='id']").val();
+
+	layer.confirm('确认要删除吗？',function() {
+		var url = '/system/cjdomain/del?id='+id;
+		$.getJSON(url, function(result){
+			if(result.code == '2000') {
+				layer.msg(result.msg, {icon:1, time:2000});
+				location.reload();
+			}else {
+				layer.msg(result.msg, {icon:2, time:2000});
+			}
+		});
+	});
+}
+
+/**
+* 开启
+*/
+function dataopen(obj)
+{
+	var _this = $(obj),
+		id = _this.parent().parent().find("input[name='id']").val();
+
+	layer.confirm('确认要开启吗？',function() {
+		var url = '/system/cjdomain/open&id='+id;
+		$.getJSON(url, function(result){
+			if(result.code == '2000') {
+				layer.msg(result.msg, {icon:1, time:2000});
+				location.reload();
+			}else {
+				layer.msg(result.msg, {icon:2, time:2000});
+			}
+		});
+	});
+}
+
+
+
+</script>
+</body>
+</html>

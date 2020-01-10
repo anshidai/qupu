@@ -1,0 +1,33 @@
+{
+    "name": "xzh/php-server-sdk",
+    "description": "xzh open platform sdk",
+    "keywords": [
+        "xzh"
+    ],
+    "homepage": "https://xiongzhang.baidu.com",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "baidu",
+            "homepage": "https://xiongzhang.baidu.com/open/"
+        }
+    ],
+    "require": {
+        "php": "^5.5 || ^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8"
+    },
+    "autoload": {
+        "psr-4": { "Xzh\\Client\\" : "lib/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Xzh\\Client\\" : "test/" }
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
+    }
+}

@@ -1,0 +1,192 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	{include file="public/meta" /}
+	<title>Tag词 - Tag词管理</title>
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<style>
+		.taglist{}
+		.taglist span{font-size:14px;line-height: 18px; margin:0;border:1px solid #ccc;padding:4px 3px;color: #5a98de;border-radius:5px;display: inline-block;margin-bottom: 5px;margin-right: 4px;}
+		.taglist span:hover{background-color:#5a98de;color: #fff;}
+	</style>
+</head>
+<body>
+	<article class="Hui-admin-page-container">
+		<form action="/ciyu/addTags" method="post" class="form form-horizontal" id="form-horizontal">			
+			<div class="row clearfix">
+				<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>Tag词名称：</label>
+				<div class="form-controls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="" placeholder="" id="name" name="name">
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>审核状态：</label>
+				<div class="form-controls col-xs-8 col-sm-9 skin-minimal">
+					<div class="radio-box">
+						<input name="status" type="radio" value="1" id="status-1">
+						<label for="status-1">待审核</label>
+					</div>
+					<div class="radio-box">
+						<input type="radio" name="status" value="2" id="status-2">
+						<label for="status-2">已删除</label>
+					</div>
+					<div class="radio-box">
+						<input type="radio" name="status" value="3" id="status-3" checked>
+						<label for="status-3" checked>审核通过</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+					<button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 提交审核</button>
+					<button onClick="layer_close();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+				</div>
+			</div>
+		</form>
+
+		<div class="panel mt-10">
+			<div class="Hui-tags-list">
+				<div class="Hui-tags-has taglist">
+				</div>
+			</div>
+
+			<div class="panel-body">
+				<div class="clearfix">
+					<span class="f-l" style="width: 50%;">
+						<input type="text" name="search-input" id="search-input" placeholder="搜索词 多个词空格隔开" value="" class="input-text" />
+					</span>
+					<span class="f-l ml-5">
+						<button name="" id="search-search" class="btn btn-success radius" type="button"><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+					</span>
+				</div>
+				<div class="dataTables_wrapper mt-10 clearfix">
+					<table id="data-table-list" class="table table-border table-bordered table-bg table-hover table-sort">
+						<thead>
+							<tr class="text-c">
+								<!-- <th width="25"><input type="checkbox" id="selectCheckbox" name="" value=""></th> -->
+								<th width="50">ID</th>
+								<th width="250">标题</th>
+								<th width="150">操作</th>
+							</tr>
+						</thead>
+						<tbody class="getData-list" id="search-tab-list" data-currPage='1'>
+						</tbody>
+					</table>
+				</div>
+				<!-- dataTables_wrapper end -->
+
+			</div>
+			<!-- panel-body end -->
+
+		</div>
+
+
+	</article>
+
+	{include file="public/footer" /}
+
+	<script type="text/javascript" src="__SKINADMIN__/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/lib/webuploader/0.1.5/webuploader.min.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/static/business/js/main.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/lib/layui/layui.js"></script>
+	<script type="text/javascript">
+		function addRows(_this, title, id)
+		{
+			var tagObj = $('.taglist');
+			var taglist = tagObj.find('span');
+			var taghtml = '<span>'+title+'</span>';
+
+			var isadd = true; 
+			if (taglist.length == 0) {
+				
+			} else {
+				taglist.each(function(index, element){
+					if (taglist.eq(index).html() == title) {
+						isadd = false;
+					}
+				});
+			}
+
+			if (isadd) {
+				tagObj.append(taghtml);
+				$(_this).attr('class', 'btn btn-primary-outline radius disabled size-S ml-5');
+				$(_this).attr('onClick', 'javascript:;');
+				$('#form-horizontal').append('<input type="hidden" name="ids[]" value="'+id+'" />');
+			}
+		}
+
+
+		$(function(){
+			
+			// 复选框样式
+			$('.skin-minimal input').iCheck({
+				checkboxClass: 'icheckbox-blue',
+				radioClass: 'iradio-blue',
+				increaseArea: '20%'
+			});
+
+			$('#search-search').click(function(){
+				var keyword = $('#search-input').val();
+
+				if (keyword == '') {
+					layer.msg('请输入搜索词', {icon:2, time:2000});
+					return;
+				}
+
+				var url = '/ciyu/queryWords?keyword='+keyword;
+				$.getJSON(url, function(result){
+					var tabObj = $('#search-tab-list');
+					tabObj.html('');
+
+					if(result.code == '2000') {
+						if (result.data.length == 0) {
+							layer.msg('未能查找到相关记录', {icon:2, time:2000});
+						} else {
+							for (var i = 0; i < result.data.length; i++) {
+								var rows = result.data[i];
+
+								var tr = "<tr class=\"text-c\">\n";
+								tr += "<td>"+rows.id+"</td>";
+								tr += "<td>"+rows.title+"</td>";
+								tr += "<td><a class=\"btn btn-success-outline radius size-S ml-5\" onClick=\"addRows(this, '"+rows.title+"', "+rows.id+")\" href=\"javascript:;\">加入</a></td>\n";
+								tr += "</tr>\n";
+
+								tabObj.append(tr);
+							}	
+						}
+
+					}else {
+						layer.msg(result.msg, {icon:2, time:2000});
+					}
+				});
+
+			});
+
+			// 表单提交验证
+			$("#form-horizontal").validate({
+				rules: {
+			
+				},
+				onkeyup: false,
+				focusCleanup: true,
+				success: "valid",
+				submitHandler: function(form){
+					var options = {
+						success: showResponse,
+						dataType: 'json',
+						//resetForm: true,
+					};
+					$(form).ajaxSubmit(options);
+				}
+			});
+		});
+	</script>
+	<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

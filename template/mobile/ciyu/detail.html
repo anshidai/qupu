@@ -1,0 +1,169 @@
+<?php 
+use app\components\Urls;
+use app\components\helper\StringHelper;
+
+?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<title>{$info['title']}_词语大全</title>
+<link rel="stylesheet" type="text/css" href="__MCSS__/detail_h5.css" />
+</head>
+<body>
+    <main class="page-wrap">
+        <header class="header">
+            <div class="sidebar">
+                <a href="https://zuowen.jupeixun.cn"><i class="home"></i></a>
+                <a href="https://zuowen.jupeixun.cn">聚培训</a>
+                <code>&gt;</code>
+                <a href="{:Urls::url('mobile_ciyu_category')}">词语大全</a><code>&gt;</code>    
+            </div>
+        </header>
+        <article class="page-bd">
+            <!--基本信息-->
+            <section class="mod baseinfo idiom-baseinfo" style="border:0">
+                <article class="mod-bd">
+                    <div class="wrap clearfix">
+                        <h2 class="big">{$info['title']}</h2>
+                        <div class="pronunciations-wrap">
+                            <div class="pronunciation">
+                                <span class="pinyin">[ {$info['title_pinyin']} ]</span>
+                                {notempty name="info['voice_file']"}
+                                <a href="javascript:;" class="audio g-icon" data-audio="" data-src="{$info['voice_file']}" data-logid="idiom-detail-idiom_play_audio"></a>
+                                {/notempty}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <section class="mod base-explain">
+                <header class="mod-hd">
+                    <h2 class="title">基本解释</h2>
+                </header>
+                <article class="mod-bd">
+                    <div class="wrap clearfix">
+                        <dl class="content">
+                            <dt class="desc">{$info['base_explain']}</dt></dl>
+                    </div>
+                </article>
+            </section>
+            <!-- 基本解释 end -->
+            
+            {notempty name="info['content']['content']"}
+            <section class="mod detail-explain idiom">
+                <header class="mod-hd">
+                    <h2 class="title">详细解释</h2>
+                </header>
+                <article class="mod-bd js-unfold-content" data-max-height="650" data-item-class="js-unfold-item-height" data-top="">
+                    <div class="wrap clearfix">
+                        <div class="content">
+                            <div class="desc-content">
+                                {$info['content']['content']|raw}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                <footer class="mod-ft">
+                    <div class="js-unfold-button">
+                        <i class="icon"></i>
+                    </div>
+                </footer>
+            </section>
+            {/notempty}
+            <!-- 详细解释 end -->
+            
+            {notempty name="structList['synonym'][0]['content_arr']"}
+            <section class="mod related-phrase homoionym">
+                <header class="mod-hd"><h2 class="title">近义词</h2></header>
+                <div class="mod-bd js-unfold-content" data-max-height="122" style="max-height: 122px;">
+                    <div class="wrap clearfix">
+                        {foreach name="structList['synonym'][0]['content_arr']" item="vo"}
+                        <ul class="content g-flex w-3">
+                            {foreach name="vo" item="item"}
+                            <li class="item"><a href="javascript:;" class="link">{$item}</a></li>
+                            {/foreach}
+                        </ul>
+                        {/foreach}
+                    </div>
+                </div>
+                <!-- <footer class="mod-ft">
+                    <div class="js-unfold-button" style="display: block;">
+                        <i class="icon"></i>
+                    </div>
+                </footer> -->
+            </section>
+            {/notempty}
+            <!-- 近义词 end -->
+
+            {notempty name="structList['antonym'][0]['content_arr']"}
+            <section class="mod related-phrase antonym">
+                <header class="mod-hd"><h2 class="title">反义词</h2></header>
+                <div class="mod-bd js-unfold-content" data-max-height="122" style="max-height: 122px;">
+                    <div class="wrap clearfix">
+                        {foreach name="structList['antonym'][0]['content_arr']" item="vo"}
+                        <ul class="content g-flex w-3">
+                            {foreach name="vo" item="item"}
+                            <li class="item"><a href="javascript:;" class="link">{$item}</a></li>
+                            {/foreach}
+                        </ul>
+                        {/foreach}
+                    </div>
+                </div>
+                <!-- <footer class="mod-ft">
+                    <div class="js-unfold-button" style="display: block;">
+                        <i class="icon"></i>
+                    </div>
+                </footer> -->
+            </section>
+            {/notempty}
+            <!-- 反义词 end -->
+         
+            <section class="mod related-phrase hot-list">
+                <header class="mod-hd"><h2 class="title">热门词语</h2></header>
+                <div class="mod-bd js-unfold-content" data-max-height="122" style="max-height: 122px;">
+                    <div class="wrap clearfix">
+                        {foreach name="related" item="vo"}
+                        <ul class="content g-flex w-3">
+                            {foreach name="vo" item="item"}
+                            <li class="item">
+                                <a href="{:Urls::url('mobile_ciyu_detail',$item['identify'])}" class="link">{$item['title']}</a></li>
+                            {/foreach}
+                        </ul>
+                        {/foreach}
+                        
+                    </div>
+                </div>
+                <footer class="mod-ft">
+                    <div class="js-unfold-button" style="display: block;">
+                        <i class="icon"></i>
+                    </div>
+                </footer>
+            </section>
+            <!-- 热门成语 end -->
+        
+        </article>
+    </main>
+</body>
+<script src="__MJS__/jquery.min.js" type="text/javascript"></script>
+<script src="__MJS__/audio.js" type="text/javascript"></script>
+<script type="text/javascript">
+$('.js-unfold-button').on('click',
+    function() {
+        //展开
+        if ($(this).parents('.mod').find('.mod-bd').hasClass('js-unfold-content')) {
+            $(this).addClass('unfold');
+            $(this).parents('.mod').find('.mod-bd').removeClass('js-unfold-content').removeAttr('style');
+        } else {
+            $(this).removeClass('unfold');
+            $(this).parents('.mod').find('.mod-bd').addClass('js-unfold-content').attr('style', 'max-height:' + $(this).parents('.mod').find('.mod-bd').data('max-height') + 'px');
+        }
+    });
+webpackJsonp([6],{49:function(e,t,n){"use strict";function s(e){return e&&e.__esModule?e:{"default":e}}var r=n(6),i=s(r);n(1),n(50),n(2),n(4),n(3);var o=n(5);new o,new i.default},50:function(e,t){}},[49]);
+</script>
+
+{include file="public/tongji" /}
+
+</html>

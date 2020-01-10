@@ -1,0 +1,110 @@
+<?php 
+use app\components\Urls;
+use app\components\helper\StringHelper;
+
+?>
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>酷故事-关于{$keyword}的故事大全</title>
+    <meta name="keywords" content="{$keyword}" />
+    <meta name="description" content="{$keyword}" />
+    <link href='__MCSS__/index.css' type='text/css' rel='stylesheet' />
+    <script type="text/javascript" src="__MJS__/jquery.min.js"></script>
+</head>
+<script>
+$(function() {
+    $("#pop-nav").click(function() {
+        if ($("#nav-pop").is(":hidden")) {
+            $("#nav-pop").show();
+        } else {
+            $("#nav-pop").hide();
+        }
+    })
+})
+</script>
+
+<body>
+    <header id="header">
+        <div class="header ">
+            <div class="logowrapper" id="logolink" isSnow="0">
+                <a href="{$Think.MOBILE_DOMAIN}">
+                    <div class="logo" id="logo"></div>
+                </a>
+            </div>
+            <nav class="head-link">
+                <!-- <a id="login" class="member-link">登录<span class="num-tips" id="num-tips"></span></a> -->
+                <a id="pop-nav" href="javascript:void(0);" class="channel-link">故事类别</a>
+            </nav>
+
+            <!-- 头部导航区 -->
+            <nav class="main-nav">
+                <div class="main-nav-list">
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(1))}" title="童话故事">童话故事</a>
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(6))}" title="儿童故事">儿童故事</a>
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(12))}" title="成语故事">成语故事</a>
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(16))}" title="神话故事">神话故事</a>
+                </div>
+                <div class="main-nav-list">
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(3))}" title="格林童话">格林童话</a>
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(7))}" title="睡前故事">睡前故事</a>
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(8))}" title="幼儿故事">幼儿故事</a>
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(2))}" title="安徒生童话">安徒生童话</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 导航弹层 -->
+    {include file="public/pull_menu" /}
+    <div id="content">
+        <!-- 搜索 -->
+        {include file="public/search" /}
+        <!--搜索列表的模块-->
+        <div id="mod-news" class="module">
+            <div class="module-t ">
+                <h3>关于"<span>{$keyword}</span>"的故事</h3>
+            </div>
+            <div class="module-c">
+                <div class="list-mod">
+                    <ul class="cont-list">
+                    	{foreach name="list" item="vo"}
+                        <li><a href="{:Urls::url('mobile_gushi_detail',$vo['identify'])}">{$vo['title']}</a><span class="cmt-num">{:getFormatDate($vo['edittime'])}</span></li>
+						{/foreach}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- 搜索 -->
+        {include file="public/search" /}
+
+        <!-- 底部导航 -->
+        <div class="expand-mod">
+            <div class="expand-mod-c">
+                <ul class="more-list">
+                <li>
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(1))}" title="童话故事">童话故事</a>
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(6))}" title="儿童故事">儿童故事</a>
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(12))}" title="成语故事">成语故事</a>
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(16))}" title="神话故事">神话故事</a>
+                </li>
+                <li>
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(3))}" title="格林童话">格林童话</a>
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(7))}" title="睡前故事">睡前故事</a>
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(8))}" title="幼儿故事">幼儿故事</a>
+                    <a href="{:Urls::url('mobile_category-pinyin', getCatePinyinByCid(2))}" title="安徒生童话">安徒生童话</a>
+                </li>
+            </ul>
+            </div>
+        </div>
+        
+        {include file="public/footer" /}
+</body>
+
+</html>

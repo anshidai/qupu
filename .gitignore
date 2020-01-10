@@ -1,0 +1,9 @@
+/.idea
+/.vscode
+*.log
+.env
+.DS_Store
+.tags
+.tags_sorted_by_file
+public/pro.php
+*.sql

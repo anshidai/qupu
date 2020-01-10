@@ -1,0 +1,75 @@
+<?php 
+use app\components\Urls;
+
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>{$info['name']}_{$info['name']}大全_酷故事</title>
+    <meta name="description" content="酷故事为您提供最新最全的{$info['name']}大全、儿{$info['name']}全集、{$info['name']}大全文字版、给宝宝讲故事" />
+    <meta name="keywords" content="{$info['name']}大全,{$info['name']}全集,{$info['name']}大全文字版,给宝宝讲故事" />
+    <link href="__CSS__/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div class="quank">
+        {include file="public/header" /}
+            <div class="dangq">
+                <ul>
+                    <li>当前位置：<a href='{$Think.WWW_DOMAIN}'>酷故事</a> > 
+                    	{notempty name="cateParentInfo"}
+                    	<a href='{:Urls::url('home_category-pinyin',$cateParentInfo['pinyin'])}'>{$cateParentInfo['name']}</a> > 
+                    	{/notempty}
+                    	<a href='{:Urls::url('home_category-pinyin',$info['pinyin'])}'>{$info['name']}</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="arb">
+                <ul class="tutiao2">
+                    <li><a href=''>{$info['name']}</a></li>
+                </ul>
+                <ul class="listb">
+                	{foreach name="list" item="vo" key="k"}
+                    <li><span>{:getFormatDate($vo['edittime'])}</span><a href='{:Urls::url('home_gushi_detail',$vo['identify'])}'>{$vo['title']}</a><br>
+                    {if condition="$k > 0 && (($k%5) eq 0)"}<hr>{/if}
+                    </li>
+                    {/foreach}
+                </ul>
+                <div class="main_page">
+                    {$pages|raw}
+                </div>
+            </div>
+            <div class="ary">
+            	{notempty name="subCate"}
+                <ul class="tutiao">
+                    <li>儿童故事</li>
+                </ul>
+                <ul class="cat_filter">
+                	{foreach name="subCate" item="vo"}
+                    <li><a href='{:Urls::url('home_category-pinyin',$vo['pinyin'])}' target="_blank">{$vo['name']}</a></li>
+                    {/foreach}
+                </ul>
+                {/notempty}
+                <ul class="tutiao">
+                    <li>故事排行</li>
+                </ul>
+                <ul class="paib">
+                    {foreach name="toplist" item="vo"}
+                    <li><span>·</span><a href='{:Urls::url('home_gushi_detail',$vo['identify'])}' target="_blank">{$vo['title']}</a></li>
+                    {/foreach}
+                </ul>
+                <ul class="tutiao">
+                    <li>推荐故事</li>
+                </ul>
+                <ul class="arxg">
+                    {foreach name="recommend" item="vo"}
+                    <li><span>·</span><a href='{:Urls::url('home_gushi_detail',$vo['identify'])}' target="_blank">{$vo['title']}</a></li>
+                    {/foreach}
+                </ul>
+            </div>
+            
+            {include file="public/footer" /}
+        </div>
+</body>
+
+</html>

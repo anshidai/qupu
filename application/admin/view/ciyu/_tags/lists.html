@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	{include file="public/meta" /}
+	<title>tag词列表 - Tag词管理</title>
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<style>
+		.layui-upload-file{display: none;}
+	</style>
+</head>
+<body>
+	{include file="public/menu" /}
+	<section class="Hui-admin-article-wrapper">
+		{include file="public/header" /}
+
+		<div class="Hui-admin-article">
+			<nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+				首页
+				<span class="c-gray en">/</span>
+				Tag词管理
+				<span class="c-gray en">/</span>
+				Tag词列表
+			</nav>
+			<article class="Hui-admin-content clearfix">
+				<div class="panel">
+					<form action="/ciyu/tagslist" method="get" class="form form-horizontal" id="	">
+					<div class="panel-body">
+						<div class="row clearfix">
+							<div class="col-xs-12 col-sm-6 col-md-3">
+								<div class="row clearfix mb-10">
+									<span class="col-xs-4 form-item-label">审核状态：</span>
+									<span class="col-xs-8 form-item-control">
+										<span class="select-box">
+											<select id="status" name="status" class="select">
+												<option value="0">请选择</option>
+												<option value="1" {if condition="$status eq 1"}selected{/if}>待审核</option>
+												<option value="2" {if condition="$status eq 2"}selected{/if}>已删除</option>
+												<option value="3" {if condition="$status eq 3"}selected{/if}>审核通过</option>
+											</select>
+										</span>
+									</span>
+								</div>
+							</div>
+
+							<div class="col-xs-12 col-sm-6 col-md-3">
+								<div class="row clearfix mb-10">
+									<span class="col-xs-4 form-item-label">Tag词：</span>
+									<span class="col-xs-8 form-item-control">
+										<input type="text" name="sname" id="search-input" placeholder="Tag词或ID" value="{$sname}" class="input-text" />
+									</span>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-6 col-md-3">
+								<div class="row clearfix">
+									<span class="col-xs-4 form-item-control">
+										<button name="" id="search-submit" class="btn btn-success radius" type="submit"><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				</form>
+				
+				<div class="panel mt-20">
+					<div class="panel-body">
+						<div class="clearfix">
+							<span class="f-l">
+								<a class="btn btn-primary radius" onclick="winPage('添加Tag词','/ciyu/addTags', 800,600)" href="javascript:;"><i class="Hui-iconfont">&#xe600;</i> 添加Tag词</a>
+							</span>
+							<span class="f-r">共有数据：<strong>{$total}</strong> 条</span>
+						</div>
+						<div class="dataTables_wrapper mt-20 clearfix">
+							<table id="data-table-list" class="table table-border table-bordered table-bg table-hover table-sort">
+								<thead>
+									<tr class="text-c">
+										<!-- <th width="25"><input type="checkbox" id="selectCheckbox" name="" value=""></th> -->
+										<th width="50">ID</th>
+										<th width="160">Tag词</th>
+										<th width="100">添加时间</th>
+										<th width="60">审核状态</th>
+										<th width="200">操作</th>
+									</tr>
+								</thead>
+								<tbody class="getData-list" data-currPage='1'>
+									{foreach name="list" item="vo"}
+									<tr class="text-c">
+										<!-- <td><input type="checkbox" value="{$vo['id']}" name="ids[]"></td> -->
+										<td>{$vo['id']}</td>
+										<td class="text-l">
+											{$vo['name']}
+										</td>
+										<td>{$vo['addtime']}</td>
+										<td class="td-status">
+											{if condition="($vo['status'] == 0) or ($vo['status'] == 1)"}
+											<span class="label label-default radius size-M">待审核</span>
+											{elseif condition="$vo['status'] == 2"/}
+											<span class="label label-danger radius size-M">删除</span>
+											{elseif condition="$vo['status'] == 3"/}
+											<span class="label label-success radius size-L">通过</span>
+											{/if}
+										</td>
+										<td class="f-12 td-manage">
+											<a class="btn btn-danger-outline radius size-MINI ml-5" onClick="changeDel(this,'{$vo['id']}')" href="javascript:;" title="删除">删除</a>
+
+											<a class="btn btn-secondary-outline radius size-MINI ml-5" onClick="winPage('编辑','/ciyu/editTags?id={$vo['id']}',800,400)" href="javascript:;" title="编辑">编辑</a>
+
+											<a class="btn btn-success-outline radius size-MINI ml-5" onClick="changePass(this,'{$vo['id']}')" href="javascript:;" title="通过">通过</a>
+										</td>
+									</tr>
+									{/foreach}
+								</tbody>
+							</table>
+							<div class="dataTables_paginate paging_full_numbers">
+								{$pages|raw}
+							</div>
+						</div>
+					</div>
+				</div>
+			</article>
+		</div>
+	</section>
+
+	{include file="public/footer" /}
+	<script type="text/javascript" src="__SKINADMIN__/lib/layui/layui.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			runDatetimePicker(); // 实例化日期控件
+		});
+
+		/**
+		* 全选
+		*/
+		$("#selectCheckbox").click(function(){    
+			$("input[name='ids[]']:checkbox").prop('checked', this.checked);
+		});
+
+		/**
+		* 删除-状态变更
+		*/
+		function changeDel(obj, id)
+		{
+			layer.confirm('确认要删除吗？',function(index){
+				var url = '/ciyu/delTags?id='+id;
+				$.getJSON(url, function(result){
+					if(result.code == '2000') {
+						layer.msg(result.msg, {icon:1, time:2000});
+						$(obj).parents("tr").find(".td-status").html('<span class="label label-danger radius size-M">删除</span>')
+						$(obj).hide();
+					}else {
+						layer.msg(result.msg, {icon:2, time:2000});
+					}
+				});
+			});
+		}
+
+		/**
+		* 审核通过-状态变更
+		*/
+		function changePass(obj, id)
+		{
+			layer.confirm('确认要审核通过吗？',function(index){
+				var url = '/ciyu/passTags?id='+id;
+				$.getJSON(url, function(result){
+					if(result.code == '2000') {
+						layer.msg(result.msg, {icon:1, time:2000});
+						$(obj).parents("tr").find(".td-status").html('<span class="label label-success radius size-L">通过</span>')
+						$(obj).hide();
+					}else {
+						layer.msg(result.msg, {icon:2, time:2000});
+					}
+				});
+			});
+		}
+
+	</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+.DS_Store
+.idea
+composer.lock
+release*
+.php_cs.cache
+coverage.clover

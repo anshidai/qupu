@@ -1,0 +1,121 @@
+<?php 
+use app\components\Urls;
+use app\components\helper\StringHelper;
+
+?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>词语大全 - 聚培训</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<link rel="stylesheet" type="text/css" href="https://s2.zuowen.jupeixun.cn/static/home/v2.1/css/base.css?v=ynwGSRfc">
+<link rel="stylesheet" type="text/css" href="https://s2.zuowen.jupeixun.cn/static/home/v2.1/css/common.css?v=ynwGSRfc">
+<link rel="stylesheet" type="text/css" href="https://s2.zuowen.jupeixun.cn/static/home/v2.1/css/list.css?v=ynwGSRfc">
+<link rel="stylesheet" type="text/css" href="__CSS__/page.css" />
+</head>
+<body>
+<div id="wrapper" class="container">
+<!--中间内容部分-->
+<div id="container">
+    
+    {include file="public/header" /}
+
+    <div class="main-container" style="float: left;">
+        <div class="main">
+            <section class="content-area" id="content-area">
+                <div class="wrapper js-wrapper">
+                    <div class="header mod-select">
+                        <div class="select-container fold js-select-container fold">
+                            <span class="type-title-text">类型：</span>
+                            <div class="type-list">
+                                <a href="{:Urls::url('home_ciyu_category')}?len={$charlen}" class="type-text">不限</a>
+                                {foreach name="cType" item="vo" key="k"}
+                                <a href="{:Urls::url('home_ciyu_category',$k)}?type={$k}&len={$charlen}" class="type-text {if condition="$k eq $ctype"}highlight{/if}">{$vo}</a>
+                                {/foreach}
+                                <a class="fold-btn js-more" href="javascript:void(0);" style="display: inline;">
+                                    <span class="text-more">更多</span>
+                                    <span class="text-back">收起</span>
+                                    <i class="js-icon icon-more"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="select-container js-select-container">
+                            <span class="type-title-text">字数：</span>
+                            <div class="type-list">
+                                <a href="{:Urls::url('home_ciyu_category')}?type={$ctype}" class="type-text">不限</a>
+                                {foreach name="zishuLenth" item="vo" key="k"}
+                                <a href="{:Urls::url('home_ciyu_category',$k)}?type={$ctype}&len={$k}" class="type-text {if condition="$k eq $charlen"}highlight{/if}">{$vo}</a>
+                                {/foreach}
+                                <a class="fold-btn js-more" href="javascript:void(0);">
+                                    <span class="text-more">更多</span>
+                                    <span class="text-back">收起</span>
+                                    <i class="js-icon icon-more"></i>
+                                </a>
+                            </div>
+                        </div>
+   
+                    </div>
+                    <div class="content">
+
+                        {foreach name="list" item="vo" key="k"}
+                        <div class="middle-content">
+                            <div class="middle-title">
+                                <a href="{:Urls::url('home_ciyu_detail',$vo['identify'])}">{$vo['title']}</a></div>
+                            <div class="middle-pinyin">[ {$vo['title_pinyin']} ]
+                                <a  href="javascript:void(0);" class="voice" data-audio="" id="phrase00"></a>
+                            </div>
+                            <div class="middle-more">
+                                <p class="middle-one-line">{$vo['base_explain']}</p>
+                            </div>
+                        </div>
+                        {/foreach}
+
+                        <div class="pagination" id="qaresult-page">
+                            {$pages|raw}
+                        </div>
+                    </div>
+                </div>
+                <a class="more-btn js-more-btn main-content-fold-btn" href="javascript:;" data-logid="ordinal_phrase_list_content_unfold">
+                    <span class="more-holder"></span>
+                    <span class="more-text">展开更多</span>
+                    <i class="icon-more"></i>
+                </a>
+            </section>
+        </div>
+        <div class="right">
+            <div class="mod-right-common font0">
+                <h2 class="mod-text-title mod-right-text">热门词语</h2>
+                <div class="content-two-line">
+                    {foreach name="wordsRand" item="vo"}
+                    <div class="w-3">
+                        {foreach name="vo" item="item"}
+                        <a href="{:Urls::url('mobile_ciyu_detail',$item['identify'])}" class="block-small" title="{$item['title']}">
+                            {$item['title']}
+                        </a>
+                        {/foreach}
+                    </div>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+        
+        {include file="public/footer" /}
+
+    </div>
+</div>
+</body>
+<script src="__JS__/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $('.js-more.fold-btn').on('click', function() {
+    if ($(this).parents('.select-container').hasClass('fold')) {
+        $(this).parents('.select-container').removeClass('fold');
+    } else {
+        $(this).parents('.select-container').addClass('fold');
+    }
+});
+</script>
+{include file="public/tongji" /}
+
+</html>

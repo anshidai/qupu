@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	{include file="public/meta" /}
+	<title>后台管理系统 - {$Think.SITE_NAME}</title>
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+</head>
+<body>
+
+	{include file="public/menu" /}
+
+	<div class="Hui-admin-dislpayArrow">
+		<a href="javascript:void(0);" onClick="displaynavbar(this)">
+			<i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
+			<i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
+		</a>
+	</div>
+
+	<section class="Hui-admin-article-wrapper">
+		{include file="public/header" /}
+
+		<div class="Hui-admin-article">
+			<article class="Hui-admin-content clearfix">
+				<!-- <div class="row-24 clearfix" style="margin-left: -12px; margin-right: -12px;">
+					<div class="col-24-xs-24 col-24-sm-12 col-24-md-12 col-24-lg-12 col-24-xl-6" style="padding-left: 12px; padding-right: 12px; margin-bottom: 24px;">
+						<div class="panel">
+							<div class="panel-header" style="padding:15px 24px;font-weight: 400;color:#999;">总机构数量：</div>
+							<div class="panel-body" style="padding-bottom: 0; padding-left:24px;padding-right:24px;">
+								<div class="c-primary" style="font-size: 30px;line-height: 38px;padding-bottom: 24px;">
+									0
+								</div>
+								<div class="f-14" style="padding: 10px 0;border-top:solid 1px #eee"><span class="c-999">今日入住</span> <span>0</span></div>
+							</div>
+						</div>
+					</div>
+					<div class="col-24-xs-24 col-24-sm-12 col-24-md-12 col-24-lg-12 col-24-xl-6" style="padding-left: 12px; padding-right: 12px; margin-bottom: 24px;">
+						<div class="panel">
+							<div class="panel-header" style="padding:15px 24px;font-weight: 400;color:#999;">总课程数量：</div>
+							<div class="panel-body" style="padding-bottom: 0; padding-left:24px;padding-right:24px;">
+								<div class="c-success" style="font-size: 30px;line-height: 38px;padding-bottom: 24px;">
+									0
+								</div>
+								<div class="f-14" style="padding: 10px 0;border-top:solid 1px #eee"><span class="c-999">今日新增课程</span> <span>0</span></div>
+							</div>
+						</div>
+					</div>
+					<div class="col-24-xs-24 col-24-sm-12 col-24-md-12 col-24-lg-12 col-24-xl-6" style="padding-left: 12px; padding-right: 12px; margin-bottom: 24px;">
+						<div class="panel">
+							<div class="panel-header" style="padding:15px 24px;font-weight: 400;color:#999;">总线索数量：</div>
+							<div class="panel-body" style="padding-bottom: 0; padding-left:24px;padding-right:24px;">
+								<div class="c-danger" style="font-size: 30px;line-height: 38px;padding-bottom: 24px;">
+									0
+								</div>
+								<div class="f-14" style="padding: 10px 0;border-top:solid 1px #eee"><span class="c-999">今日新增线索</span> <span>0</span></div>
+							</div>
+						</div>
+					</div>
+				</div> -->
+				<div class="panel">
+					<div class="panel-body"发布>
+						<p class="f-20 text-success">您好，欢迎使用{$Think.SITE_NAME}管理系统</p>
+						<!-- <p>登录次数：18 </p>
+						<p>上次登录IP：222.35.131.79.1  上次登录时间：2014-6-14 11:19:55</p> -->
+						<table class="table table-border table-bordered table-bg mt-20">
+							<thead>
+								<tr>
+									<th colspan="2" scope="col">服务器信息</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td width="30%">网站名称</td>
+									<td>{$Think.SITE_NAME}</td>
+								</tr>
+								<tr>
+									<td>网站域名</td>
+									<td>&copy;{$Think.WWW_DOMAIN}</td>
+								</tr>
+								<tr>
+									<td>当前Session数量 </td>
+									<td>8</td>
+								</tr>
+								<tr>
+									<td>当前SessionID </td>
+									<td>gznhpwmp34004345jz2q3l45</td>
+								</tr>
+								<tr>
+									<td>当前系统用户名 </td>
+									<td>{$user['username']}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</article>
+			<footer class="footer Hui-admin-footer">
+				<p>Copyright &copy;2019 {$Think.WWW_DOMAIN} All Rights Reserved.<br></p>
+			</footer>
+		</div>
+	</section>
+
+{include file="public/footer" /}
+</body>
+</html>

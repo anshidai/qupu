@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	{include file="public/meta" /}
+	<title>权限列表 - 权限管理</title>
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+</head>
+<body>
+	{include file="public/menu" /}
+	<section class="Hui-admin-article-wrapper">
+		{include file="public/header" /}
+
+		<div class="Hui-admin-article">
+			<nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+				首页
+				<span class="c-gray en">/</span>
+				权限管理
+				<span class="c-gray en">/</span>
+				权限列表
+			</nav>
+			<article class="Hui-admin-content clearfix">
+				<div class="panel mt-20">
+					<div class="panel-body">
+						<div class="clearfix">
+							<span class="f-l">
+							{notempty name="permis['permis_add']"}
+							<a class="btn btn-primary radius" onclick="winPage('添加权限','/permission/add')" href="javascript:;"><i class="Hui-iconfont">&#xe600;</i> 添加权限</a>
+							{/notempty}
+							</span>
+						</div>
+						<div class="dataTables_wrapper mt-20 clearfix">
+							<table id="data-table-list" class="table table-border table-bordered table-bg table-hover table-sort">
+								<thead>
+									<tr class="text-c">
+										<!-- <th width="25"><input type="checkbox" name="" value=""></th> -->
+										<th width="80">ID</th>
+										<th>权限名称</th>
+										<th>权限标记</th>
+										<th width="80">审核状态</th>
+										<th width="200">操作</th>
+									</tr>
+								</thead>
+								<tbody class="getData-list" data-currPage='1'>
+									{foreach name="permisTree" item="vo"}
+									<tr class="text-c">
+										<!-- <td><input type="checkbox" value="{$vo['id']}" name="ids[]"></td> -->
+										<td>{$vo['id']}</td>
+										<td class="text-l">
+											{$vo['_name']|raw}&nbsp;
+										</td>
+										<td>{$vo['identify']}</td>
+										<td class="td-status">
+											{if condition="$vo['status'] == 1"}
+											<span class="label label-warning radius size-M">已禁用</span>
+											{elseif condition="$vo['status'] == 2"/}
+											<span class="label label-success radius size-M">已开启</span>
+											{/if}
+										</td>
+										<td class="f-12 td-manage">
+											{if condition="$vo['status'] == 1"}
+											{notempty name="permis['permis_open']"}
+											<a class="btn btn-success-outline radius size-MINI ml-5" onClick="changeOpen(this,'{$vo['id']}')" href="javascript:;" title="开启">开启</a>
+											{/notempty}
+
+											{elseif condition="$vo['status'] == 2"}
+											{notempty name="permis['permis_close']"}
+											<a class="btn btn-warning-outline radius size-MINI ml-5" onClick="changeClose(this,'{$vo['id']}')" href="javascript:;" title="禁用">禁用</a>
+											{/notempty}
+											{/if}
+											
+											{notempty name="permis['permis_edit']"}
+											<a class="btn btn-secondary-outline radius size-MINI ml-5" onClick="winPage('编辑权限','/permission/edit?id={$vo['id']}')" href="javascript:;" title="编辑">编辑</a>
+											{/notempty}
+
+											{if condition="$vo['ctype'] neq '3'"}
+											{notempty name="permis['permis_child']"}
+											<a class="btn btn-primary radius size-MINI ml-5" href="javascript:;" onclick="winPage('新增子权限','/permission/add?pid={$vo['id']}')" title="新增子权限">新增子权限</a>
+											{/notempty}
+											{/if}
+										</td>
+									</tr>
+									{/foreach}
+								</tbody>
+							</table>
+
+						</div>
+					</div>
+				</div>
+			</article>
+		</div>
+	</section>
+
+	{include file="public/footer" /}
+
+	<script type="text/javascript">
+		/**
+		* 禁用-状态变更
+		*/
+		function changeClose(obj, id)
+		{
+			layer.confirm('确认要禁用吗？',function(index){
+				var url = '/permission/changeClose?id='+id;
+				$.getJSON(url, function(result){
+					if(result.code == '2000') {
+						layer.msg(result.msg, {icon:1, time:2000});
+						$(obj).parents("tr").find(".td-status").html('<span class="label label-warning radius size-M">已禁用</span>')
+						$(obj).replaceWith('<a class="btn btn-success-outline radius size-MINI ml-5" onClick="changeOpen(this,'+id+')" href="javascript:;" title="开启">开启</a>')
+					}else {
+						layer.msg(result.msg, {icon:2, time:2000});
+					}
+				});
+			});
+		}
+
+		/**
+		* 开启-状态变更
+		*/
+		function changeOpen(obj, id)
+		{
+			layer.confirm('确认要开启吗？',function(index){
+				var url = '/permission/changeOpen?id='+id;
+				$.getJSON(url, function(result){
+					if(result.code == '2000') {
+						layer.msg(result.msg, {icon:1, time:2000});
+						$(obj).parents("tr").find(".td-status").html('<span class="label label-success radius size-M">已开启</span>')
+						$(obj).replaceWith('<a class="btn btn-warning-outline radius size-MINI ml-5" onClick="changeClose(this,'+id+')" href="javascript:;" title="禁用">禁用</a>')
+					}else {
+						layer.msg(result.msg, {icon:2, time:2000});
+					}
+				});
+			});
+		}
+	</script>
+</body>
+</html>

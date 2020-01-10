@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  {include file="public/meta" /}
+  <title>授权管理员 - 管理员管理</title>
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <link rel="stylesheet" type="text/css" href="__SKINADMIN__/lib/select2/css/select2.min.css" />
+</head>
+<body>
+  <article class="Hui-admin-page-container">
+    <form action="/adminuser/permis" method="post" class="form form-horizontal" id="form-horizontal">
+      <input type="hidden" name="id" value="{$info['id']}" />
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-2">用户名：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" value="{$info['name']}" placeholder="" disabled="disabled">
+        </div>
+      </div>
+
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-2">是否管理员：</label>
+        <div class="form-controls col-xs-8 col-sm-9 skin-minimal">
+          <div class="check-box">
+            <input type="checkbox" value="1" name="sys_admin" id="sys_admin-1" {if condition="$info['sys_admin'] eq 1"}checked="checked"{/if}>
+            <label for="checkbox-pinglun"><span class="c-999">拥有所有权限，下面角色可以不用选</span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>所属角色：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+            <input type="hidden" name="roleid" id="roleid" value="" />
+            <select id="roleid_multiple" class="select">
+              <option value="">请选择</option>
+              {foreach name="roleList" item="vo"}
+              <option value="{$vo['id']}" {notempty name="roleUser[$vo['id']]"}selected{/notempty}>{$vo['name']}</option>
+              {/foreach}
+            </select>
+        </div>
+      </div>
+
+      <div class="row clearfix">
+        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+          <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 提交</button>
+          <button onClick="layer_close();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+        </div>
+      </div>
+    </form>
+  </article>
+
+  {include file="public/footer" /}
+
+  <script type="text/javascript" src="__SKINADMIN__/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+  <script type="text/javascript" src="__SKINADMIN__/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+  <script type="text/javascript" src="__SKINADMIN__/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+  <script type="text/javascript" src="__SKINADMIN__/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+  <script type="text/javascript" src="__SKINADMIN__/static/business/js/main.js"></script>
+  <script type="text/javascript" src="__SKINADMIN__/lib/select2/js/select2.full.min.js"></script>
+  <script type="text/javascript">
+    $(function(){
+
+      //多选
+      $('#roleid_multiple').select2();
+      $('#roleid_multiple').change(function(){
+        var roleids = $("#roleid_multiple").select2("val")
+        $("#roleid").val(roleids);
+      });
+
+      // 复选框样式
+      $('.skin-minimal input').iCheck({
+        checkboxClass: 'icheckbox-blue',
+        radioClass: 'iradio-blue',
+        increaseArea: '20%'
+      });
+      
+      // 表单提交验证
+      $("#form-horizontal").validate({
+        rules: {
+      
+        },
+        onkeyup: false,
+        focusCleanup: true,
+        success: "valid",
+        submitHandler: function(form){
+          var options = {
+            success: showResponse,
+            dataType: 'json',
+            //resetForm: true,
+          };
+          $(form).ajaxSubmit(options);
+        }
+      });
+    });
+  </script>
+  <!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

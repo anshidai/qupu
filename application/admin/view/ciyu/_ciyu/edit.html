@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	{include file="public/meta" /}
+	<title>编辑词语 - 词语管理</title>
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<link rel="stylesheet" type="text/css" href="__SKINADMIN__/lib/select2/css/select2.min.css" />
+	<link rel="stylesheet" type="text/css" href="__SKINADMIN__/lib/layui/css/layui.css" />
+</head>
+<body>
+	<article class="Hui-admin-page-container">
+		<form action="/ciyu/edit" method="post" class="form form-horizontal" id="form-horizontal">
+			<input type="hidden" name="id" value="{$info['id']}" />
+			<div class="row clearfix">
+				<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>词语标题：</label>
+				<div class="form-controls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="{$info['title']}" placeholder="" id="title" name="title">
+				</div>
+			</div>
+
+			<div class="row cl cate-block">
+				<label class="form-label col-xs-4 col-sm-2 cate-title"><span class="c-red">*</span>所属分类：</label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<span class="select-box">
+						<select name="catid" id="catid" class="select catid">
+							<option value="">选择一级分类</option>
+							{foreach name="cateTree" item="vo"}
+							{if condition="$vo['status'] eq 3"}
+							<option value="{$vo['id']}" {if condition="$vo['id'] eq $info['catid']"}selected{/if} {if condition="$vo['is_end'] neq 1"}disabled="disabled"{/if}>{$vo['_name']|raw}</option>
+							{/if}
+							{/foreach}
+						</select>
+					</span>
+				</div>
+			</div>
+
+			<div class="row cl cate-block">
+				<label class="form-label col-xs-4 col-sm-2 cate-title"><span class="c-red">*</span>词语类型：</label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<span class="select-box">
+						<select name="ctype" id="ctype" class="select ctype">
+							<option value="">选择类型</option>
+							{foreach name="cType" item="vo" key="k"}
+							<option value="{$k}" {if condition="$k eq $info['ctype']"}selected{/if}>{$vo}</option>
+							{/foreach}
+						</select>
+					</span>
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>词语拼音：</label>
+				<div class="form-controls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="{$info['title_pinyin']}" placeholder="" id="title_pinyin" name="title_pinyin">
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>基本解释：</label>
+				<div class="form-controls col-xs-8 col-sm-9">
+					<textarea name="base_explain" id="base_explain" cols="" rows="" class="textarea textarea-picture"  placeholder="">{$info['base_explain']}</textarea>
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<label class="form-label col-xs-4 col-sm-2">英文翻译：</label>
+				<div class="form-controls col-xs-8 col-sm-9">
+					<textarea name="title_translate" id="title_translate" cols="" rows="" class="textarea textarea-picture"  placeholder="">{$info['title_translate']}</textarea>
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<label class="form-label col-xs-4 col-sm-2">TAG词：</label>
+				<div class="form-controls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="{$info['tags']}" placeholder="多个词用英文逗号隔开" id="tags" name="tags">
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<label class="form-label col-xs-4 col-sm-2">语音文件：</label>
+				<div class="form-controls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="{$info['voice_file']}" placeholder="" id="voice_file" name="voice_file">
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<label class="form-label col-xs-4 col-sm-2"><!-- <span class="c-red">*</span> -->词语详情：</label>
+				<div class="form-controls col-xs-8 col-sm-9">
+					<script id="content" name="content" type="text/plain" style="width:100%;height:300px;">{$info['content']['content']|raw}</script>
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>审核状态：</label>
+				<div class="form-controls col-xs-8 col-sm-9 skin-minimal">
+					<div class="radio-box">
+						<input name="status" type="radio" value="1" id="status-1" {if condition="$info['status'] eq 1"}checked{/if}>
+						<label for="status-1" {if condition="$info['status'] eq 1"}checked{/if}>待审核</label>
+					</div>
+					<div class="radio-box">
+						<input type="radio" name="status" value="2" id="status-2" {if condition="$info['status'] eq 2"}checked{/if}>
+						<label for="status-2" {if condition="$info['status'] eq 2"}checked{/if}>已删除</label>
+					</div>
+					<div class="radio-box">
+						<input type="radio" name="status" value="3" id="status-3" {if condition="$info['status'] eq 3"}checked{/if}>
+						<label for="status-3" {if condition="$info['status'] eq 3"}checked{/if}>审核通过</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>发布状态：</label>
+				<div class="form-controls col-xs-8 col-sm-9 skin-minimal">
+					<div class="radio-box">
+						<input name="is_show" type="radio" value="1" id="is_show-1" {if condition="$info['is_show'] eq 1"}checked{/if}>
+						<label for="is_show-1" {if condition="$info['is_show'] eq 1"}checked{/if}>待发布</label>
+					</div>
+					<div class="radio-box">
+						<input type="radio" name="is_show" value="2" id="is_show-2" {if condition="$info['is_show'] eq 2"}checked{/if}>
+						<label for="is_show-2" {if condition="$info['is_show'] eq 2"}checked{/if}>发布</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<label class="form-label col-xs-4 col-sm-2">排序值：</label>
+				<div class="form-controls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="{$info['order']}" placeholder="数值越大越靠前" id="order" name="order" style=" width:10%">
+				</div>
+			</div>
+			<div class="row clearfix">
+				<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+					{if condition="$_GET['act'] neq 'view'"}
+					<button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 提交审核</button>
+					{/if}
+					<button onClick="layer_close();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+				</div>
+			</div>
+		</form>
+	</article>
+
+	{include file="public/footer" /}
+
+	<script type="text/javascript" src="__SKINADMIN__/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/lib/webuploader/0.1.5/webuploader.min.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/lib/ueditor/1.4.3/ueditor.config.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+	<script type="text/javascript" src="__SKINADMIN__/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/static/business/js/main.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/lib/select2/js/select2.full.min.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/js/selectCate.js"></script>
+	<script type="text/javascript" src="__SKINADMIN__/lib/layui/layui.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			
+			// 复选框样式
+			$('.skin-minimal input').iCheck({
+				checkboxClass: 'icheckbox-blue',
+				radioClass: 'iradio-blue',
+				increaseArea: '20%'
+			});
+			
+			//实例化百度富文本编辑器
+			// var ue = UE.getEditor('articleEditor');
+
+			//百度编辑器加载
+			var ue = UE.getEditor('content', {
+				toolbars: [
+					['fullscreen', 'source', 'undo', 'redo','bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'justifyleft','justifyright','justifycenter','justifyjustify'],
+					['customstyle', 'paragraph', 'fontfamily', 'fontsize'],
+				]
+			});
+
+			// 表单提交验证
+			$("#form-horizontal").validate({
+				rules: {
+			
+				},
+				onkeyup: false,
+				focusCleanup: true,
+				success: "valid",
+				submitHandler: function(form){
+					var options = {
+						success: showResponse,
+						dataType: 'json',
+						//resetForm: true,
+					};
+					$(form).ajaxSubmit(options);
+				}
+			});
+		});
+	</script>
+	<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
