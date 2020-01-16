@@ -9,7 +9,7 @@ use app\services\admin\page\LoginService;
 /**
 * 后台操作日志
 */
-class ActLogService
+class AmActLogService
 {
 	/** 
     * 新增日志

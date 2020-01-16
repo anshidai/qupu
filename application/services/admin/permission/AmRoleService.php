@@ -12,7 +12,7 @@ use app\Inc\TableConst;
 /**
 * 角色后台业务处理
 */
-class RoleService
+class AmRoleService
 {
 	/**
 	* 角色表单数据 param, post, get

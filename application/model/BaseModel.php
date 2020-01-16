@@ -18,11 +18,20 @@ class BaseModel extends Model
     /**
     * 添加一条记录
     * @param array $data 添加数据
+    * @param array $addField 额外添加字段
     */
-    public static function _add($data)
+    public static function _add($data, $addField = ['addtime','edittime'])
     {
         if(empty($data)) {
             return false;
+        }
+
+        if (isset($addField['addtime'])) {
+            $data['addtime'] = date('Y-m-d H:i:s');
+        }
+
+        if (isset($addField['edittime'])) {
+            $data['edittime'] = date('Y-m-d H:i:s');
         }
 
         $model = new static;

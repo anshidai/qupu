@@ -8,10 +8,10 @@ use app\components\helper\ArrayHelper;
 use app\model\permission\AdminUserModel;
 use app\model\common\ConfigModel;
 use app\services\admin\page\AdminUserService;
-use app\services\admin\common\PublicService;
-use app\services\admin\permission\RoleUserService;
-use app\services\admin\permission\RoleService;
-use app\services\admin\logs\ActLogService;
+use app\services\admin\common\AmPublicService;
+use app\services\admin\permission\AmRoleUserService;
+use app\services\admin\permission\AmRoleService;
+use app\services\admin\logs\AmActLogService;
 use app\Inc\TableConst;
 
 /**
@@ -31,13 +31,7 @@ class AdminUser extends Admin
     */
     public function lists(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['adminuser_list'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('adminuser_list');
         
         $sname = $request->get('sname');
         $page = $request->get('page', 1, 'intval');
@@ -60,7 +54,7 @@ class AdminUser extends Admin
         }
 
         $requestUrl = $request->url(true);
-        $pages = PublicService::showPages($requestUrl, $total, $page, $pagesize);
+        $pages = AmPublicService::showPages($requestUrl, $total, $page, $pagesize);
 
         $this->assign('sname', $sname);
         $this->assign('total', $total);
@@ -74,13 +68,7 @@ class AdminUser extends Admin
     */
     public function add(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['adminuser_add'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('adminuser_add');
 
         $userName = $request->post('name');
 
@@ -114,7 +102,7 @@ class AdminUser extends Admin
                 $insertId = AdminUserModel::_add($data);
 
                 //添加日志
-                ActLogService::addLog($insertId, TableConst::ACTLOG_USER, '新增用户', $_REQUEST);
+                AmActLogService::addLog($insertId, TableConst::ACTLOG_USER, '新增用户', $_REQUEST);
 
             } catch(\Exception $e) {
                 return $this->jsonError($e->getMessage());
@@ -131,13 +119,7 @@ class AdminUser extends Admin
     */
     public function edit(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['adminuser_edit'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('adminuser_edit');
 
         $userid = $request->param('id');
 
@@ -160,7 +142,7 @@ class AdminUser extends Admin
                 AdminUserModel::_update($userid, $data);
 
                 //添加日志
-                ActLogService::addLog($userid, TableConst::ACTLOG_USER, '编辑用户', $_REQUEST);
+                AmActLogService::addLog($userid, TableConst::ACTLOG_USER, '编辑用户', $_REQUEST);
 
                 return $this->JsonSuccess([], '操作成功');
             }
@@ -178,13 +160,7 @@ class AdminUser extends Admin
     */
     public function permis(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['adminuser_permis'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('adminuser_permis');
 
         $userid = $request->param('id', 0, 'intval');
 
@@ -201,13 +177,13 @@ class AdminUser extends Admin
                 //校验表单
                 $sysadmin = AdminUserService::checkRolePost();
 
-                $data = RoleUserService::roleUserPost($userid);
-                RoleUserService::editRoleUser($userid, $data);
+                $data = AmRoleUserService::roleUserPost($userid);
+                AmRoleUserService::editRoleUser($userid, $data);
 
                 AdminUserModel::_update($userid, ['sys_admin' => $sysadmin]);
 
                 //添加日志
-                ActLogService::addLog($userid, TableConst::ACTLOG_USER, '用户授权', $_REQUEST);
+                AmActLogService::addLog($userid, TableConst::ACTLOG_USER, '用户授权', $_REQUEST);
                 return $this->JsonSuccess([], '操作成功');
             }
 
@@ -215,8 +191,8 @@ class AdminUser extends Admin
             return $this->jsonError($e->getMessage());
         }
 
-        $roleList = RoleService::getRole();
-        $roleUser = RoleUserService::getRoleByUser($userid);
+        $roleList = AmRoleService::getRole();
+        $roleUser = AmRoleUserService::getRoleByUser($userid);
         $roleUser = ArrayHelper::toHashmap($roleUser, 'role_id');
 
         $this->assign('info', $info);
@@ -259,7 +235,7 @@ class AdminUser extends Admin
                 ];
                 if (AdminUserModel::_update(self::$userid, $data)) {
                     //添加日志
-                    ActLogService::addLog(self::$userid, TableConst::ACTLOG_USER, '用户修改密码', $_REQUEST);
+                    AmActLogService::addLog(self::$userid, TableConst::ACTLOG_USER, '用户修改密码', $_REQUEST);
 
                     return $this->JsonSuccess([], '操作成功，请重新登录', '/page/logout');
                 } else {
@@ -280,13 +256,7 @@ class AdminUser extends Admin
     */
     public function changeDel(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['adminuser_del'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('adminuser_del');
 
         $userid = $request->get('id', 0, 'intval');
 
@@ -307,7 +277,7 @@ class AdminUser extends Admin
             AdminUserModel::_update($userid, ['status' => TableConst::ADMIN_STATUS_DEL]);
 
             //添加日志
-            ActLogService::addLog($userid, TableConst::ACTLOG_USER, '删除用户', $_REQUEST);
+            AmActLogService::addLog($userid, TableConst::ACTLOG_USER, '删除用户', $_REQUEST);
 
             return $this->JsonSuccess([], '操作成功');
             
@@ -321,13 +291,7 @@ class AdminUser extends Admin
     */
     public function changeClose(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['adminuser_close'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('adminuser_close');
 
         $userid = $request->get('id', 0, 'intval');
 
@@ -348,7 +312,7 @@ class AdminUser extends Admin
             AdminUserModel::_update($userid, ['status' => TableConst::ADMIN_STATUS_DEFAULT]);
 
             //添加日志
-            ActLogService::addLog($userid, TableConst::ACTLOG_USER, '禁用用户', $_REQUEST);
+            AmActLogService::addLog($userid, TableConst::ACTLOG_USER, '禁用用户', $_REQUEST);
 
             return $this->JsonSuccess([], '操作成功');
             
@@ -362,14 +326,8 @@ class AdminUser extends Admin
     */
     public function changeOpen(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['adminuser_open'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
-        
+        $this->checkPermis('adminuser_open');
+
         $userid = $request->get('id', 0, 'intval');
 
         try {
@@ -389,7 +347,7 @@ class AdminUser extends Admin
             AdminUserModel::_update($userid, ['status' => TableConst::ADMIN_STATUS_ENABLED]);
 
             //添加日志
-            ActLogService::addLog($userid, TableConst::ACTLOG_USER, '启用用户', $_REQUEST);
+            AmActLogService::addLog($userid, TableConst::ACTLOG_USER, '启用用户', $_REQUEST);
 
             return $this->JsonSuccess([], '操作成功');
             

@@ -8,7 +8,7 @@ use app\components\helper\PaginationHelper;
 /**
 * 后台公用
 */
-class PublicService
+class AmPublicService
 {
 	/**
 	* 后台分页

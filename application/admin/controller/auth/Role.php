@@ -5,10 +5,10 @@ namespace app\admin\controller\auth;
 use think\Request;
 use app\admin\controller\Admin;
 use app\model\permission\RoleModel;
-use app\services\admin\common\PublicService;
-use app\services\admin\permission\RoleService;
-use app\services\admin\permission\PermissionService;
-use app\services\admin\logs\ActLogService;
+use app\services\admin\common\AmPublicService;
+use app\services\admin\permission\AmRoleService;
+use app\services\admin\permission\AmPermissionService;
+use app\services\admin\logs\AmActLogService;
 use app\components\helper\ArrayHelper;
 use app\Inc\TableConst;
 
@@ -27,13 +27,7 @@ class Role extends Admin
 
     public function lists(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['role_list'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('role_list');
 
         $page = $request->get('page', 1, 'intval');
         $pagesize = $request->get('pagesize', $this->pagesize, 'intval');
@@ -42,7 +36,7 @@ class Role extends Admin
         $list = RoleModel::getList($map, $page, $pagesize, $field);
 
         $requestUrl = $request->url(true);
-        $pages = PublicService::showPages($requestUrl, $total, $page, $pagesize);
+        $pages = AmPublicService::showPages($requestUrl, $total, $page, $pagesize);
 
         $this->assign('total', $total);
         $this->assign('list', $list);
@@ -56,36 +50,30 @@ class Role extends Admin
     */
     public function permis(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['role_permis'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('role_permis');
 
         $id = $request->param('id');
 
         $info = RoleModel::getInfo($id);
         if ($this->isPost()) {
             try {
-                $permis = RoleService::rolePermisPost();
-                RoleService::editRolePermis($id, $permis);
+                $permis = AmRoleService::rolePermisPost();
+                AmRoleService::editRolePermis($id, $permis);
 
             } catch(\Exception $e) {
                 return $this->jsonError($e->getMessage());
             }
 
             //添加日志
-            ActLogService::addLog($id, TableConst::ACTLOG_ROLE, '角色授权', $_REQUEST);
+            AmActLogService::addLog($id, TableConst::ACTLOG_ROLE, '角色授权', $_REQUEST);
 
             return $this->JsonSuccess([], '操作成功');
         }
 
-        $permis = PermissionService::getPermisList();
-        $permisTree = PermissionService::getPermisTree($permis);
+        $permis = AmPermissionService::getPermisList();
+        $permisTree = AmPermissionService::getPermisTree($permis);
 
-        $permisArr = RoleService::getRolePermission($id);
+        $permisArr = AmRoleService::getRolePermission($id);
         $permisArr = ArrayHelper::toHashmap($permisArr, 'id'); //已有权限
 
         $this->assign('info', $info);
@@ -99,24 +87,18 @@ class Role extends Admin
     */
     public function add(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['role_add'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('role_add');
 
         if ($this->isPost()) {
             try {
-                $data = RoleService::rolePost();
+                $data = AmRoleService::rolePost();
                 $data['status'] = TableConst::ROLE_STATUS_ENABLED;
                 
-                RoleService::checkExist($data['name']);
+                AmRoleService::checkExist($data['name']);
                 $insertId = RoleModel::_add($data);
 
                 //添加日志
-                ActLogService::addLog($insertId, TableConst::ACTLOG_ROLE, '添加角色', $_REQUEST);
+                AmActLogService::addLog($insertId, TableConst::ACTLOG_ROLE, '添加角色', $_REQUEST);
 
             } catch(\Exception $e) {
                 return $this->jsonError($e->getMessage());
@@ -133,13 +115,7 @@ class Role extends Admin
     */
     public function edit(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['role_edit'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('role_edit');
 
         $id = $request->param('id');
 
@@ -155,13 +131,13 @@ class Role extends Admin
                     throw new \Exception("请求ID和提交ID不一致");
                 }
 
-                $data = RoleService::rolePost();
+                $data = AmRoleService::rolePost();
                 $data['edittime'] = date('Y-m-d H:i:s');
-                RoleService::checkExist($data['name'], $id);
+                AmRoleService::checkExist($data['name'], $id);
                 RoleModel::_update($id, $data);
 
                 //添加日志
-                ActLogService::addLog($id, TableConst::ACTLOG_ROLE, '编辑角色', $_REQUEST);
+                AmActLogService::addLog($id, TableConst::ACTLOG_ROLE, '编辑角色', $_REQUEST);
 
                 return $this->JsonSuccess([], '操作成功');
             }
@@ -180,13 +156,7 @@ class Role extends Admin
     */
     public function changeClose(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['role_close'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('role_close');
 
         $id = $request->get('id', 0, 'intval');
 
@@ -207,7 +177,7 @@ class Role extends Admin
             RoleModel::_update($id, ['status' => TableConst::ROLE_STATUS_DISABLED]);
 
             //添加日志
-            ActLogService::addLog($id, TableConst::ACTLOG_ROLE, '禁用角色', $_REQUEST);
+            AmActLogService::addLog($id, TableConst::ACTLOG_ROLE, '禁用角色', $_REQUEST);
 
             return $this->JsonSuccess([], '操作成功');
             
@@ -221,13 +191,7 @@ class Role extends Admin
     */
     public function changeOpen(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['role_open'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('role_open');
         
         $id = $request->get('id', 0, 'intval');
 
@@ -248,7 +212,7 @@ class Role extends Admin
             RoleModel::_update($id, ['status' => TableConst::ROLE_STATUS_ENABLED]);
 
             //添加日志
-            ActLogService::addLog($id, TableConst::ACTLOG_ROLE, '启用角色', $_REQUEST);
+            AmActLogService::addLog($id, TableConst::ACTLOG_ROLE, '启用角色', $_REQUEST);
 
             return $this->JsonSuccess([], '操作成功');
             

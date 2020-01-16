@@ -27,13 +27,13 @@ Route::domain('admin-qupu.jupeixun.cn', function() {
 
 	//作者路由
 	Route::group('author', function(){
-		Route::rule('list','admin/songs.author/lists', 'get');
-		Route::rule('auditlist','admin/songs.author/auditlist', 'get');
-		Route::rule('add','admin/songs.author/add', 'get|post');
-		Route::rule('edit','admin/songs.author/edit', 'get|post');
-		Route::rule('changePass','admin/songs.author/changePass', 'get');
-		Route::rule('changePush','admin/songs.author/changePush', 'get');
-		Route::rule('changeDel','admin/songs.author/changeDel', 'get');
+		Route::rule('list','admin/songs.Author/lists', 'get');
+		Route::rule('auditlist','admin/songs.Author/auditlist', 'get');
+		Route::rule('add','admin/songs.Author/add', 'get|post');
+		Route::rule('edit','admin/songs.Author/edit', 'get|post');
+		Route::rule('changePass','admin/songs.Author/changePass', 'get');
+		Route::rule('changePush','admin/songs.Author/changePush', 'get');
+		Route::rule('changeDel','admin/songs.Author/changeDel', 'get');
 	});
 
 	//歌谱路由

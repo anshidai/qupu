@@ -13,25 +13,6 @@ use Db;
 class QupuModel extends BaseModel
 {
 	protected $table = 'qp_gepu';
-	
-    /**
-	* 添加一条记录
-	* @param array $data 添加数据
-	*/
-    public static function _add($data)
-    {
-    	if(empty($data)) {
-    		return false;
-    	}
-    	$data['addtime'] = date('Y-m-d H:i:s');
-    	$data['edittime'] = date('Y-m-d H:i:s');
-
-    	$model = new static;
-    	$res = $model->save($data);
-
-    	return !empty($res)? $model->id: 0;
-    }
-
 
 	/**
     * 获取通过审核列表

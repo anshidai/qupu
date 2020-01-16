@@ -5,8 +5,8 @@ namespace app\admin\controller\auth;
 use think\Request;
 use app\admin\controller\Admin;
 use app\model\permission\PermissionModel;
-use app\services\admin\permission\PermissionService;
-use app\services\admin\logs\ActLogService;
+use app\services\admin\permission\AmPermissionService;
+use app\services\admin\logs\AmActLogService;
 use app\Inc\TableConst;
 
 /**
@@ -20,22 +20,16 @@ class Permission extends Admin
     {
         parent::initialize();
 
-        $permis = PermissionService::getPermisList();
-		self::$permisTree = PermissionService::getPermisTree($permis);
-		self::$permisTree = PermissionService::parsePermisTree(self::$permisTree);
+        $permis = AmPermissionService::getPermisList();
+		self::$permisTree = AmPermissionService::getPermisTree($permis);
+		self::$permisTree = AmPermissionService::parsePermisTree(self::$permisTree);
 
 		$this->assign('permisTree', self::$permisTree);
     }
 
     public function lists(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['permis_list'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('permis_list');
 
     	return $this->fetch();
     }
@@ -46,26 +40,20 @@ class Permission extends Admin
     */
     public function add(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['permis_add'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('permis_add');
 
         $pid = $request->param('pid');
 
         if ($this->isPost()) {
             try {
-                $data = PermissionService::permissionPost();
+                $data = AmPermissionService::permissionPost();
                 $data['status'] = TableConst::PERMISSION_STATUS_ENABLED;
                 
-                PermissionService::checkIdentifyExist($data['identify']);
+                AmPermissionService::checkIdentifyExist($data['identify']);
                 $insertId = PermissionModel::_add($data);
 
                 //添加日志
-                ActLogService::addLog($insertId, TableConst::ACTLOG_PERMIS, '添加权限', $_REQUEST);
+                AmActLogService::addLog($insertId, TableConst::ACTLOG_PERMIS, '添加权限', $_REQUEST);
 
             } catch(\Exception $e) {
                 return $this->jsonError($e->getMessage());
@@ -84,13 +72,7 @@ class Permission extends Admin
     */
     public function edit(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['permis_edit'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('permis_edit');
 
         $id = $request->param('id');
 
@@ -106,13 +88,13 @@ class Permission extends Admin
                     throw new \Exception("请求权限ID和提交ID不一致");
                 }
 
-                $data = PermissionService::permissionPost();
+                $data = AmPermissionService::permissionPost();
                 $data['edittime'] = date('Y-m-d H:i:s');
-                PermissionService::checkIdentifyExist($data['identify'], $id);
+                AmPermissionService::checkIdentifyExist($data['identify'], $id);
                 PermissionModel::_update($id, $data);
 
                 //添加日志
-                ActLogService::addLog($id, TableConst::ACTLOG_PERMIS, '编辑权限', $_REQUEST);
+                AmActLogService::addLog($id, TableConst::ACTLOG_PERMIS, '编辑权限', $_REQUEST);
 
                 return $this->JsonSuccess([], '操作成功');
             }
@@ -131,13 +113,7 @@ class Permission extends Admin
     */
     public function changeClose(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['permis_close'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('permis_close');
 
         $id = $request->get('id', 0, 'intval');
 
@@ -158,7 +134,7 @@ class Permission extends Admin
             PermissionModel::_update($id, ['status' => TableConst::PERMISSION_STATUS_DISABLED]);
 
             //添加日志
-            ActLogService::addLog($id, TableConst::ACTLOG_PERMIS, '禁用权限', $_REQUEST);
+            AmActLogService::addLog($id, TableConst::ACTLOG_PERMIS, '禁用权限', $_REQUEST);
 
             return $this->JsonSuccess([], '操作成功');
             
@@ -172,13 +148,7 @@ class Permission extends Admin
     */
     public function changeOpen(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['permis_open'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('permis_open');
         
         $id = $request->get('id', 0, 'intval');
 
@@ -199,7 +169,7 @@ class Permission extends Admin
             PermissionModel::_update($id, ['status' => TableConst::PERMISSION_STATUS_ENABLED]);
 
             //添加日志
-            ActLogService::addLog($id, TableConst::ACTLOG_PERMIS, '启用权限', $_REQUEST);
+            AmActLogService::addLog($id, TableConst::ACTLOG_PERMIS, '启用权限', $_REQUEST);
 
             return $this->JsonSuccess([], '操作成功');
             

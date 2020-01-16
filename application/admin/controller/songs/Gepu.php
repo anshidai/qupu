@@ -7,12 +7,9 @@ use app\admin\controller\Admin;
 use app\components\helper\ArrayHelper;
 use app\model\songs\QupuModel;
 use app\model\songs\GepuDataModel;
-use app\services\admin\logs\ActLogService;
 
 use app\services\category\BUCategoryService;
-use app\services\admin\common\PublicService;
-use app\services\admin\chengyu\IdiomService;
-use app\services\chengyu\BUIdiomService;
+use app\services\admin\common\AmPublicService;
 use app\Inc\TableConst;
 use app\components\Urls;
 use app\services\common\BUCom;
@@ -47,13 +44,7 @@ class Gepu extends Admin
     */
     public function lists(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['gepu_list'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('gepu_list');
 
         $sname = $request->get('sname', '', 'trim');
         $page = $request->get('page', 1, 'intval');
@@ -122,13 +113,7 @@ class Gepu extends Admin
     */
     public function auditlist(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['gepu_auditlist'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('gepu_auditlist');
 
         $sname = $request->get('sname');
         $page = $request->get('page', 1, 'intval');
@@ -180,13 +165,7 @@ class Gepu extends Admin
     */
     public function add(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['gepu_add'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('gepu_add');
 
     	if ($this->isPost()) {
             try {
@@ -216,13 +195,7 @@ class Gepu extends Admin
     */
     public function edit(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['gepu_edit'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('gepu_edit');
 
         $idiomid = $request->param('id');
 
@@ -279,13 +252,7 @@ class Gepu extends Admin
     */
     public function changeDel(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['chengyu_del'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('chengyu_del');
 
         $idiomid = $request->get('id', 0, 'intval');
 
@@ -317,13 +284,7 @@ class Gepu extends Admin
     */
     public function changePass(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['chengyu_pass'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('chengyu_pass');
 
         $idiomid = $request->get('id', 0, 'intval');
 
@@ -355,13 +316,7 @@ class Gepu extends Admin
     */
     public function changePush(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['chengyu_push'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('chengyu_push');
 
         $idiomid = $request->get('id', 0, 'intval');
 

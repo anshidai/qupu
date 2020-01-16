@@ -23,8 +23,29 @@ if (defined('MODEL_ENV') && MODEL_ENV == 'dev') {
 	          </ul>
 	        </dd>
 	    </dl>
+
+	    {if condition="checkMenuPermis('author_page', $permis)"}
+		<dl id="menu-author" class="Hui-menu">
+			<dt class="Hui-menu-title selected">
+				<i class="Hui-iconfont">&#xe626;</i> 作者管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i>
+			</dt>
+			<dd class="Hui-menu-item" {if condition="in_array($cname, ['chengyu.author','chengyu.tags']) || ($cname eq 'category.category' && $ctype eq TableConst::CATE_TYPE_AUTHOR)"}style="display:block"{/if}>
+				<ul>
+					<li {if condition="$routeUrl == '/cate/list' && $ctype eq TableConst::CATE_TYPE_AUTHOR"}class="current"{/if}><a href="/cate/list?ctype={:TableConst::CATE_TYPE_AUTHOR}">分类列表</a></li>
+					
+					{if condition="checkMenuPermis('author_auditlist', $permis)"}
+					<li {if condition="$routeUrl == '/author/auditlist'"}class="current"{/if}><a href="/author/auditlist">作者审核</a></li>
+					{/if}
+					
+					{if condition="checkMenuPermis('author_list', $permis)"}
+					<li {if condition="$routeUrl == '/author/list'"}class="current"{/if}><a href="/author/list">作者列表</a></li>
+					{/if}
+				</ul>
+			</dd>
+		</dl>
+		{/if}
 			
-		{notempty name="permis['gepu_page']"}
+		{if condition="checkMenuPermis('gepu_page', $permis)"}
 		<dl id="menu-gepu" class="Hui-menu">
 			<dt class="Hui-menu-title selected">
 				<i class="Hui-iconfont">&#xe616;</i> 歌谱管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i>
@@ -33,62 +54,40 @@ if (defined('MODEL_ENV') && MODEL_ENV == 'dev') {
 				<ul>
 					<li {if condition="$routeUrl == '/cate/list' && $ctype eq TableConst::CATE_TYPE_GEPU"}class="current"{/if}><a href="/cate/list?ctype={:TableConst::CATE_TYPE_GEPU}">分类列表</a></li>
 
-					{notempty name="permis['gepu_auditlist']"}
+					{if condition="checkMenuPermis('gepu_auditlist', $permis)"}
 					<li {if condition="$routeUrl == '/gepu/auditlist'"}class="current"{/if}><a href="/gepu/auditlist">歌谱审核</a></li>
-					{/notempty}
+					{/if}
 
-					{notempty name="permis['gepu_list']"}
+					{if condition="checkMenuPermis('gepu_list', $permis)"}
 					<li {if condition="$routeUrl == '/gepu/list'"}class="current"{/if}><a href="/gepu/list">歌谱列表</a></li>
-					{/notempty}
+					{/if}
 				</ul>
 			</dd>
 		</dl>
-		{/notempty}
+		{/if}
 		
-		{notempty name="permis['author_page']"}
-		<dl id="menu-author" class="Hui-menu">
-			<dt class="Hui-menu-title selected">
-				<i class="Hui-iconfont">&#xe626;</i> 作者管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i>
-			</dt>
-			<dd class="Hui-menu-item" {if condition="in_array($cname, ['chengyu.author','chengyu.tags']) || ($cname eq 'category.category' && $ctype eq TableConst::CATE_TYPE_AUTHOR)"}style="display:block"{/if}>
-				<ul>
-					<li {if condition="$routeUrl == '/cate/list' && $ctype eq TableConst::CATE_TYPE_AUTHOR"}class="current"{/if}><a href="/cate/list?ctype={:TableConst::CATE_TYPE_AUTHOR}" title="分类列表">分类列表</a></li>
-					
-					{notempty name="permis['author_auditlist']"}
-					<li {if condition="$routeUrl == '/author/auditlist'"}class="current"{/if}><a href="/author/auditlist">作者审核</a></li>
-					{/notempty}
-					
-					{notempty name="permis['author_list']"}
-					<li {if condition="$routeUrl == '/author/list'"}class="current"{/if}><a href="/author/list">作者列表</a></li>
-					{/notempty}
-				</ul>
-			</dd>
-		</dl>
-		{/notempty}
-	
-		{notempty name="permis['adminuser_page']"}
+		{if condition="checkMenuPermis(['adminuser_list','permis_list','role_list'], $permis)"}
 		<dl id="menu-admin" class="Hui-menu">
 			<dt class="Hui-menu-title selected">
 				<i class="Hui-iconfont">&#xe60d;</i> 管理员管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i>
 			</dt>
 			<dd class="Hui-menu-item" {if condition="in_array($cname, ['auth.adminuser','auth.permission','auth.role'])"}style="display:block"{/if}>
 				<ul>
-					{notempty name="permis['adminuser_list']"}
-					<li {if condition="$routeUrl == '/adminuser/list'"}class="current"{/if}><a href="/adminUser/list" title="管理员列表">管理员列表</a></li>
-					{/notempty}
+					{if condition="checkMenuPermis('adminuser_list', $permis)"}
+					<li {if condition="$routeUrl == '/adminuser/list'"}class="current"{/if}><a href="/adminUser/list">管理员列表</a></li>
+					{/if}
 
-					{notempty name="permis['permis_list']"}
-					<li {if condition="$routeUrl == '/permission/list'"}class="current"{/if}><a href="/permission/list" title="权限列表">权限列表</a></li>
-					{/notempty}
+					{if condition="checkMenuPermis('permis_list', $permis)"}
+					<li {if condition="$routeUrl == '/permission/list'"}class="current"{/if}><a href="/permission/list">权限列表</a></li>
+					{/if}
 
-					{notempty name="permis['role_list']"}
-					<li {if condition="$routeUrl == '/role/list'"}class="current"{/if}><a href="/role/list" title="角色列表">角色列表</a></li>
-					{/notempty}
+					{if condition="checkMenuPermis('role_list', $permis)"}
+					<li {if condition="$routeUrl == '/role/list'"}class="current"{/if}><a href="/role/list">角色列表</a></li>
+					{/if}
 				</ul>
 			</dd>
 		</dl>
-		{/notempty}
-
+		{/if}
 
 		<dl id="menu-system" class="Hui-menu">
 			<dt class="Hui-menu-title selected">
@@ -96,9 +95,9 @@ if (defined('MODEL_ENV') && MODEL_ENV == 'dev') {
 			</dt>
 			<dd class="Hui-menu-item" {if condition="in_array($cname, ['system.cjdomain'])"}style="display:block"{/if}>
 				<ul>
-					{notempty name="permis['config_crawler_list']"}
-					<li {if condition="$routeUrl == '/system/cjdomain/list'"}class="current"{/if}><a href="/system/cjdomain/list" title="采集站点列表">采集站点列表</a></li>
-					{/notempty}
+					{if condition="checkMenuPermis('config_crawler_list', $permis)"}
+					<li {if condition="$routeUrl == '/system/cjdomain/list'"}class="current"{/if}><a href="/system/cjdomain/list">采集站点列表</a></li>
+					{/if}
 				</ul>
 			</dd>
 		</dl>

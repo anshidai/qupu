@@ -43,7 +43,7 @@ class TableConst
 	const GEPU_STATUS_NOT = 1; //未审核
     const GEPU_STATUS_DEL = 2; //已删除
 	const GEPU_STATUS_PASS = 3; //审核通过
-	public static $gepuStatusList = [
+	public static $gepu_status_list = [
 		self::GEPU_STATUS_NOT => '待审核',
 		self::GEPU_STATUS_DEL => '已删除',
 		self::GEPU_STATUS_PASS => '审核通过',
@@ -54,10 +54,26 @@ class TableConst
     const GEPU_SHOW_HIDE = 1; //不显示
     const GEPU_SHOW_OK = 2; //显示
 
+    //作者审核状态
+    const AUTHOR_STATUS_DEFAULT = 0; //默认
+	const AUTHOR_STATUS_NOT = 1; //未审核
+    const AUTHOR_STATUS_DEL = 2; //已删除
+	const AUTHOR_STATUS_PASS = 3; //审核通过
+	public static $author_status_list = [
+		self::AUTHOR_STATUS_NOT => '待审核',
+		self::AUTHOR_STATUS_DEL => '已删除',
+		self::AUTHOR_STATUS_PASS => '审核通过',
+	];
+
+	//作者前台是否显示
+    const AUTHOR_SHOW_DEFAULT = 0; //默认
+    const AUTHOR_SHOW_HIDE = 1; //不显示
+    const AUTHOR_SHOW_OK = 2; //显示
+
     //分类类型
     const CATE_TYPE_GEPU = 1;
 	const CATE_TYPE_AUTHOR = 2;
-	public static $cateTypeList = [
+	public static $cate_type_list = [
         self::CATE_TYPE_GEPU => '歌谱',
 		self::CATE_TYPE_AUTHOR => '作者',
 	];

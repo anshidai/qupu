@@ -10,7 +10,7 @@ use app\components\helper\PinYinHelper;
 use app\model\category\CategoryModel;
 use app\Inc\TableConst;
 
-class CategoryService
+class AmCategoryService
 {
 	/**
 	* 分类表单数据 param, post, get
@@ -30,7 +30,7 @@ class CategoryService
 
 		if (empty($data['name'])) {
 			throw new \Exception("分类名称不能为空"); 
-		} elseif(empty(TableConst::$cateTypeList[$data['ctype']])) {
+		} elseif(empty(TableConst::$cate_type_list[$data['ctype']])) {
 			throw new \Exception("请选择类型"); 
 		} elseif (empty($data['pinyin'])) {
 			throw new \Exception("拼音不能为空"); 

@@ -8,7 +8,7 @@ use app\model\permission\PermissionModel;
 /**
 * 权限后台业务处理
 */
-class PermissionService
+class AmPermissionService
 {
 	/**
 	* 权限表单数据 param, post, get

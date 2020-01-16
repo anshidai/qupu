@@ -13,7 +13,7 @@ use app\Inc\TableConst;
 /**
 * 用户角色后台业务处理
 */
-class RoleUserService
+class AmRoleUserService
 {
 	/**
 	* 用户角色集合

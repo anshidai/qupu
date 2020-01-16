@@ -7,10 +7,10 @@ use app\admin\controller\Admin;
 use think\facade\Request as Requests;
 use app\components\COM;
 use app\Inc\TableConst;
-use app\services\admin\category\CategoryService;
+use app\services\admin\category\AmCategoryService;
 use app\services\category\BUCategoryService;
 use app\model\category\CategoryModel;
-use app\services\admin\logs\ActLogService;
+use app\services\admin\logs\AmActLogService;
 
 /**
 * 分类
@@ -36,49 +36,37 @@ class Category extends Admin
         self::$cateTree = BUCategoryService::parseCateTree(self::$cateTree);
         $this->assign('cateTree', self::$cateTree);
 
-        self::$cateTypeList = TableConst::$cateTypeList;
+        self::$cateTypeList = TableConst::$cate_type_list;
         $this->assign('cateTypeList', self::$cateTypeList);
     }
 
 
 	public function lists(Request $request)
 	{  
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['cate_list'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('cate_list');
 
 		return $this->fetch();
 	}
 
 	public function add(Request $request)
 	{
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['cate_add'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('cate_add');
 
         $pid = $request->param('pid');
         $ctype = $request->param('ctype');
 
 		if ($this->isPost()) {
             try {
-                $data = CategoryService::catePost();
+                $data = AmCategoryService::catePost();
                 $data['status'] = TableConst::CATE_STATUS_ENABLED;
 
-                CategoryService::checkCateExist($data['name'], $data['parentid']);
-                CategoryService::checkRowExistByPinyin($data['pinyin']);
+                AmCategoryService::checkCateExist($data['name'], $data['parentid']);
+                AmCategoryService::checkRowExistByPinyin($data['pinyin']);
                 if ($insertId = CategoryModel::_add($data)) {
                     //刷新分类缓存
                     BUCategoryService::getCateAll($ctype, true);
 
-                    $level = CategoryService::getCateLevel($insertId);
+                    $level = AmCategoryService::getCateLevel($insertId);
                     if ($level) {
                         CategoryModel::_update($insertId, ['level' => $level]);
                     }
@@ -102,13 +90,7 @@ class Category extends Admin
     */
     public function edit(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['cate_edit'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('cate_edit');
 
         $cid = $request->param('id');
 
@@ -124,12 +106,12 @@ class Category extends Admin
                 if ($info['id'] != $id) {
                     throw new \Exception("请求分类ID和提交ID不一致");
                 }
-                $data = CategoryService::catePost();
+                $data = AmCategoryService::catePost();
                 $data['edittime'] = date('Y-m-d H:i:s');
-                $data['level'] = CategoryService::getCateLevel($cid);
+                $data['level'] = AmCategoryService::getCateLevel($cid);
 
-                CategoryService::checkCateExist($data['name'], $data['parentid'], $cid);
-                CategoryService::checkRowExistByPinyin($data['pinyin'], $id);
+                AmCategoryService::checkCateExist($data['name'], $data['parentid'], $cid);
+                AmCategoryService::checkRowExistByPinyin($data['pinyin'], $id);
                 CategoryModel::_update($cid, $data);
 
                 //刷新分类缓存
@@ -152,13 +134,7 @@ class Category extends Admin
     */
     public function changeClose(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['cate_close'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('cate_close');
 
         $cid = $request->get('id', 0, 'intval');
 
@@ -193,13 +169,7 @@ class Category extends Admin
     */
     public function changeOpen(Request $request)
     {
-        //判断页面访问权限
-        if (!self::$sysadmin && empty(self::$permis['cate_open'])) {
-            if ($this->isPost() || $this->isAjax()) {
-                return $this->jsonError('抱歉没有访问权限');
-            } 
-            return $this->fetch('public/notpermission');
-        }
+        $this->checkPermis('cate_open');
 
         $cid = $request->get('id', 0, 'intval');
 

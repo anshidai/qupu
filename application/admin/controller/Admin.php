@@ -58,4 +58,29 @@ class Admin extends Base
     }
 
 
+    /**
+    * 判断访问权限
+    * @param string|array $permis 权限code
+    */
+    protected function checkPermis($permis)
+    {
+        if (self::$sysadmin) {
+            return true;
+        }
+        
+        if (is_string($permis)) {
+            $permis = [$permis];
+        }
+
+        for ($i = 0; $i < count($permis); $i++) {
+            if (empty(self::$permis[$permis[$i]])) {
+                if ($this->isPost() || $this->isAjax()) {
+                    return $this->jsonError('抱歉没有访问权限');
+                } 
+                return $this->fetch('public/notpermission');
+            }
+        }
+        return true;
+    }
+
 }
